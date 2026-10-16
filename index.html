@@ -16,7 +16,7 @@
     <!-- FontAwesome 6 Icons CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- SheetJS for Excel/CSV Parsing -->
+    <!-- SheetJS for Excel/CSV Parsing (สำหรับแผงผู้ดูแลระบบ) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <script>
@@ -187,7 +187,7 @@
                     <!-- API Loading State Indicator -->
                     <div id="apiLoadingState" class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-amber-500/20 text-amber-300 rounded-xl border border-amber-400/30 text-xs sm:text-sm font-medium animate-pulse">
                         <i class="fa-solid fa-spinner fa-spin text-amber-400"></i>
-                        <span>กำลังเชื่อมต่อและดึงข้อมูลล่าสุดจาก Google Sheets...</span>
+                        <span>กำลังเชื่อมต่อและดึงฐานข้อมูลจากเซิร์ฟเวอร์ (voters.json)...</span>
                     </div>
 
                     <!-- Search Form -->
@@ -422,6 +422,7 @@
 
         </section>
 
+        <!-- TAB 2: CONDITIONS & DISTRICTS VIEW -->
         <section id="tab-conditions" class="tab-content hidden space-y-6" style="display: none;">
             <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-md border border-slate-200 space-y-6">
                 <div class="border-b border-slate-200 pb-4">
@@ -459,9 +460,9 @@
                     <img src="district.png" alt="หน่วยเลือกตั้ง" class="w-full h-full object-cover rounded-sm">
                 </div>
             </div>
-            
         </section>
 
+        <!-- TAB 3: ADMIN MANAGEMENT VIEW -->
         <section id="tab-admin" class="tab-content hidden space-y-6" style="display: none;">
             
             <!-- ADMIN LOGIN FORM -->
@@ -508,7 +509,7 @@
                         </div>
                         <div>
                             <h3 class="text-xl font-bold">แผงควบคุมผู้ดูแลระบบ (Admin Database Management)</h3>
-                            <p class="text-xs text-slate-300">จัดการข้อมูลผู้มีสิทธิเลือกตั้ง อัปโหลดไฟล์ CSV/Excel และตั้งค่ารหัสผ่าน</p>
+                            <p class="text-xs text-slate-300">จัดการข้อมูลผู้มีสิทธิเลือกตั้ง อัปโหลดไฟล์ JSON/CSV/Excel และตั้งค่ารหัสผ่าน</p>
                         </div>
                     </div>
 
@@ -535,22 +536,22 @@
                         </h4>
                         
                         <p class="text-xs text-slate-500 leading-relaxed">
-                            รองรับไฟล์ <strong>.CSV</strong> หรือ <strong>.XLSX</strong> โดยมีหัวคอลัมน์มาตรฐาน:
+                            รองรับไฟล์ <strong>.JSON</strong>, <strong>.CSV</strong> หรือ <strong>.XLSX</strong> โดยมีโครงสร้างข้อมูล/หัวคอลัมน์มาตรฐาน:
                             <code class="text-[11px] bg-slate-100 p-1.5 rounded font-mono block mt-1 border border-slate-200">เลขบัตรประชาชน, ชื่อ-นามสกุล, อำเภอ, สถานที่ลงคะแนน, ลำดับศูนย์, ชื่อศูนย์, ลำดับสังกัด, ชื่อสังกัด, ลำดับรายชื่อ, สิทธิ</code>
                         </p>
 
                         <!-- Upload Dropzone -->
                         <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-coop-600 transition bg-slate-50/50 cursor-pointer" onclick="document.getElementById('dbFileInput').click()">
-                            <i class="fa-solid fa-file-excel text-3xl text-emerald-600 mb-2"></i>
-                            <span class="text-xs font-semibold text-coop-700 block">คลิกเลือกไฟล์ CSV หรือ Excel</span>
+                            <i class="fa-solid fa-file-code text-3xl text-amber-600 mb-2"></i>
+                            <span class="text-xs font-semibold text-coop-700 block">คลิกเลือกไฟล์ JSON, CSV หรือ Excel</span>
                             <span class="text-[10px] text-slate-400">หรือลากไฟล์มาวางในบริเวณนี้</span>
-                            <input type="file" id="dbFileInput" accept=".csv, .xlsx, .xls, .json" class="hidden" onchange="handleFileUpload(event)" />
+                            <input type="file" id="dbFileInput" accept=".json, .csv, .xlsx, .xls" class="hidden" onchange="handleFileUpload(event)" />
                         </div>
 
                         <div class="pt-2">
                             <button type="button" onclick="confirmResetDatabase()" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition border border-slate-300 flex items-center justify-center gap-2 cursor-pointer">
                                 <i class="fa-solid fa-arrow-rotate-left text-amber-600"></i>
-                                <span>รีเซ็ตเป็นข้อมูลตัวอย่างเริ่มต้น</span>
+                                <span>รีเซ็ตเป็นข้อมูลเริ่มต้น</span>
                             </button>
                         </div>
                     </div>
@@ -745,7 +746,7 @@
                 <div><strong>สถานที่ลงคะแนน:</strong> <span id="print-polling-place" class="font-bold text-slate-900">-</span></div>
                 <div><strong>ลำดับศูนย์ / ชื่อศูนย์:</strong> <span id="print-center">-</span></div>
                 <div><strong>ลำดับสังกัด / ชื่อสังกัด:</strong> <span id="print-affiliation">-</span></div>
-                <div><strong>ลำดับรายชื่อ:</strong> <span id="print-list-no" class="font-black text-xl text-amber-1500 font-mono">-</span></div>
+                <div><strong>ลำดับรายชื่อ:</strong> <span id="print-list-no" class="font-black text-xl text-amber-900 font-mono">-</span></div>
                 <div><strong>สิทธิในการลงคะแนน:</strong> <span id="print-rights" class="font-bold text-slate-900">-</span></div>
             </div>
         </div>
@@ -772,31 +773,55 @@
     </div>
 
     <script>
-        // 🔗 URL ของ Google Apps Script Web App
-        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycby60WqNaEidXrCdCrIPWES1azDiFdu3ays_ckYfAJ2f83hVj1OD9aYHfX9ONSL-IU_1dQ/exec";
-
-        // ฐานข้อมูลตัวอย่างสำรองเมื่อ API มีปัญหา
-        const DEFAULT_VOTER_DB = [
-            {
-                citizenId: "3440100234567",
-                name: "นายสมชาย ดีมาก",
-                district: "เมืองมหาสารคาม",
-                pollingPlace: "หอประชุมโรงเรียนอนุบาลมหาสารคาม",
-                centerNo: "01",
-                centerName: "ศูนย์เมืองมหาสารคาม 1",
-                affiliationNo: "05",
-                affiliationName: "สพป.มหาสารคาม เขต 1",
-                listNo: "0124",
-                rights: "กรรมการ และ ผู้แทนสมาชิก"
-            }
-        ];
+        const DEFAULT_VOTER_DB = [];
 
         let voterDatabase = [];
         let currentSearchResult = null;
         let isAdminLoggedIn = false;
         let adminPassword = "Mkttc2026";
 
-        // ทำงานทันทีเมื่อเข้าสู่หน้า index (DOMContentLoaded)
+        // ฟังก์ชันแปลงและจัดโครงสร้างข้อมูลผู้ลงคะแนน (รองรับทั้งภาษาไทยและอังกฤษ)
+        function parseVoterJsonData(jsonData) {
+            if (!Array.isArray(jsonData)) return [];
+            return jsonData.map(item => {
+                const getVal = (...keys) => {
+                    for (let k of keys) {
+                        for (let key in item) {
+                            if (key.trim().toLowerCase() === k.toLowerCase()) {
+                                return String(item[key] !== undefined && item[key] !== null ? item[key] : '').trim();
+                            }
+                        }
+                    }
+                    return '';
+                };
+
+                const citizenId = getVal('เลขบัตรประชาชน', 'เลขบัตรประจำตัวประชาชน', 'เลขประชาชน', 'citizenId', 'id', 'citizendid');
+                const name = getVal('ชื่อ-นามสกุล', 'ชื่อ - นามสกุล', 'ชื่อนามสกุล', 'ชื่อ สกุล', 'ชื่อ', 'name');
+                const district = getVal('อำเภอ', 'district');
+                const pollingPlace = getVal('สถานที่ลงคะแนน', 'สถานที่เลือกตั้ง', 'สถานที่', 'pollingPlace', 'pollingplace');
+                const centerNo = getVal('ลำดับศูนย์', 'ศูนย์', 'centerNo', 'centerno');
+                const centerName = getVal('ชื่อศูนย์', 'centerName', 'centername');
+                const affiliationNo = getVal('ลำดับสังกัด', 'สังกัด', 'affiliationNo', 'affiliationno');
+                const affiliationName = getVal('ชื่อสังกัด', 'affiliationName', 'affiliationname');
+                const listNo = getVal('ลำดับรายชื่อ', 'ลำดับ', 'listNo', 'listno');
+                const rights = getVal('สิทธิ', 'สิทธิการลงคะแนน', 'rights') || 'กรรมการ และ ผู้แทนสมาชิก';
+
+                return {
+                    citizenId: citizenId,
+                    name: name,
+                    district: district,
+                    pollingPlace: pollingPlace,
+                    centerNo: centerNo,
+                    centerName: centerName,
+                    affiliationNo: affiliationNo,
+                    affiliationName: affiliationName,
+                    listNo: listNo,
+                    rights: rights
+                };
+            }).filter(v => v.citizenId || v.name);
+        }
+
+        // เริ่มทำงานทันทีเมื่อเปิดหน้าเว็บ (index.html)
         document.addEventListener('DOMContentLoaded', function() {
             loadAdminPassFromStorage();
             
@@ -810,104 +835,49 @@
 
             switchTab('search');
             
-            // เรียกดึงข้อมูล Sheet API ทันทีที่เข้าหน้าเว็บ
-            autoLoadGoogleSheet();
+            // 🚀 สั่งโหลดฐานข้อมูลจากไฟล์ voters.json ทันทีเมื่อเปิดหน้าจอ index
+            autoLoadVotersJson();
         });
 
-        // ฟังก์ชันดึงข้อมูลจาก Google Sheets API พร้อมระบบ Loading
-        function autoLoadGoogleSheet() {
+        // ฟังก์ชันดึงไฟล์ voters.json จากเซิร์ฟเวอร์
+        function autoLoadVotersJson() {
             const loadingEl = document.getElementById('apiLoadingState');
             if (loadingEl) {
                 loadingEl.classList.remove('hidden');
                 loadingEl.style.display = 'inline-flex';
+                const textSpan = loadingEl.querySelector('span');
+                if (textSpan) textSpan.innerText = 'กำลังโหลดฐานข้อมูลเลือกตั้งจากเซิร์ฟเวอร์ (voters.json)...';
             }
 
-            if (!GOOGLE_SHEET_URL) {
-                showToast('⚠️ กรุณาระบุ URL ของ Google Apps Script', 'error');
-                if (loadingEl) loadingEl.style.display = 'none';
-                loadDatabaseFromStorage();
-                return;
-            }
-
-            fetch(GOOGLE_SHEET_URL, {
-                method: 'GET',
-                redirect: 'follow'
-            })
-            .then(async response => {
-                const textData = await response.text();
-                
-                // ดักจับกรณีผู้ใช้ยังไม่ได้เปิดสิทธิ์ Anyone บน Apps Script (จะส่งกลับเป็น HTML หน้า Login)
-                if (textData.trim().startsWith('<')) {
-                    throw new Error("สิทธิ์การเข้าถึง API ไม่ถูกต้อง (ส่งกลับเป็น HTML) กรุณาตั้งสิทธิ์เป็น Anyone ใน Apps Script");
-                }
-                
-                try {
-                    return JSON.parse(textData);
-                } catch (e) {
-                    throw new Error("รูปแบบข้อมูลที่ได้รับไม่อยู่ในรูปแบบ JSON ที่ถูกต้อง");
-                }
-            })
-            .then(jsonData => {
-                if (Array.isArray(jsonData) && jsonData.length > 0) {
-                    voterDatabase = parseExcelJsonData(jsonData);
-                    
-                    const validRecords = voterDatabase.filter(v => v.citizenId && v.citizenId.length >= 10);
-                    
-                    if (validRecords.length === 0) {
-                        showToast('⚠️ เชื่อมต่อสำเร็จ แต่ไม่พบเลขบัตรประชาชน! โปรดตรวจสอบชื่อหัวคอลัมน์ใน Google Sheets', 'error');
-                    } else {
+            // ใส่ Query String กัน Browser Cache บนมือถือ
+            const cacheBuster = '?t=' + new Date().getTime();
+            fetch('voters.json' + cacheBuster, { cache: 'no-cache' })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`ไม่พบไฟล์ voters.json บนเซิร์ฟเวอร์ (HTTP ${response.status})`);
+                    }
+                    return response.json();
+                })
+                .then(jsonData => {
+                    if (Array.isArray(jsonData) && jsonData.length > 0) {
+                        voterDatabase = parseVoterJsonData(jsonData);
                         saveDatabaseToStorage();
-                        showToast(`✅ โหลดฐานข้อมูลจาก Google Sheets สำเร็จ (${voterDatabase.length} รายการ)`, 'success');
+                        showToast(`✅ โหลดฐานข้อมูลจาก voters.json เรียบร้อย (${voterDatabase.length} รายการ)`, 'success');
+                    } else {
+                        throw new Error('ไฟล์ voters.json ไม่มีข้อมูล');
                     }
-                } else {
-                    showToast('⚠️ ไม่พบข้อมูลใน Google Sheets', 'error');
+                })
+                .catch(err => {
+                    console.error("JSON Load Error:", err);
                     loadDatabaseFromStorage();
-                }
-            })
-            .catch(err => {
-                showToast(`❌ ${err.message}`, 'error');
-                loadDatabaseFromStorage();
-            })
-            .finally(() => {
-                // ซ่อนแถบแสดงสถานะกำลังโหลดเมื่อทำรายการเสร็จ
-                if (loadingEl) {
-                    loadingEl.classList.add('hidden');
-                    loadingEl.style.display = 'none';
-                }
-            });
-        }
-
-        // แปลงหัวคอลัมน์ใน Google Sheets ให้รองรับหลายรูปแบบ
-        function parseExcelJsonData(jsonData) {
-            return jsonData.map(row => {
-                const getVal = (keys) => {
-                    for (let k of keys) {
-                        for (let rowKey in row) {
-                            if (rowKey.toString().trim().toLowerCase() === k.toLowerCase()) {
-                                return row[rowKey];
-                            }
-                        }
+                    showToast(`⚠️ ${err.message} (ดึงข้อมูลสำรองในเครื่องมาใช้)`, 'error');
+                })
+                .finally(() => {
+                    if (loadingEl) {
+                        loadingEl.classList.add('hidden');
+                        loadingEl.style.display = 'none';
                     }
-                    return '';
-                };
-
-                const rawCitizenId = String(getVal([
-                    'citizenId', 'เลขบัตรประชาชน', 'เลขประจำตัวประชาชน', 'เลขบัตร', 'id', 'เลขประชาชน'
-                ]) || '').replace(/\D/g, '');
-
-                return {
-                    citizenId: rawCitizenId,
-                    name: String(getVal(['name', 'ชื่อ-นามสกุล', 'ชื่อ นามสกุล', 'ชื่อ', 'ชื่อผู้มีสิทธิ']) || ''),
-                    district: String(getVal(['district', 'อำเภอ', 'อ.']) || ''),
-                    pollingPlace: String(getVal(['pollingPlace', 'สถานที่ลงคะแนน', 'สถานที่เลือกตั้ง', 'สถานที่']) || ''),
-                    centerNo: String(getVal(['centerNo', 'ลำดับศูนย์', 'ศูนย์ลำดับที่']) || ''),
-                    centerName: String(getVal(['centerName', 'ชื่อศูนย์', 'ศูนย์']) || ''),
-                    affiliationNo: String(getVal(['affiliationNo', 'ลำดับสังกัด', 'สังกัดลำดับที่']) || ''),
-                    affiliationName: String(getVal(['affiliationName', 'ชื่อสังกัด', 'สังกัด']) || ''),
-                    listNo: String(getVal(['listNo', 'ลำดับรายชื่อ', 'ลำดับ', 'ลำดับที่']) || ''),
-                    rights: String(getVal(['rights', 'สิทธิ', 'สิทธิการลงคะแนน']) || 'กรรมการ และ ผู้แทนสมาชิก')
-                };
-            });
+                });
         }
 
         function loadDatabaseFromStorage() {
@@ -1011,7 +981,7 @@
                 return;
             }
 
-            const found = voterDatabase.find(v => v.citizenId.replace(/\D/g, '') === rawInput);
+            const found = voterDatabase.find(v => String(v.citizenId).replace(/\D/g, '') === rawInput);
 
             if (found) {
                 currentSearchResult = found;
@@ -1031,29 +1001,30 @@
         }
 
         function displayVoterResult(data) {
-            document.getElementById('res-name').innerText = data.name;
+            document.getElementById('res-name').innerText = data.name || '-';
             document.getElementById('res-id').innerText = formatIdDisplay(data.citizenId);
-            document.getElementById('res-district').innerText = data.district;
-            document.getElementById('res-polling-place').innerText = data.pollingPlace;
-            document.getElementById('res-center-no').innerText = data.centerNo;
-            document.getElementById('res-center-name').innerText = data.centerName;
-            document.getElementById('res-affiliation-no').innerText = data.affiliationNo;
-            document.getElementById('res-affiliation-name').innerText = data.affiliationName;
-            document.getElementById('res-list-no').innerText = data.listNo;
-            document.getElementById('res-rights').innerText = data.rights;
+            document.getElementById('res-district').innerText = data.district || '-';
+            document.getElementById('res-polling-place').innerText = data.pollingPlace || '-';
+            document.getElementById('res-center-no').innerText = data.centerNo || '-';
+            document.getElementById('res-center-name').innerText = data.centerName || '-';
+            document.getElementById('res-affiliation-no').innerText = data.affiliationNo || '-';
+            document.getElementById('res-affiliation-name').innerText = data.affiliationName || '-';
+            document.getElementById('res-list-no').innerText = data.listNo || '-';
+            document.getElementById('res-rights').innerText = data.rights || '-';
 
             document.getElementById('print-id').innerText = formatIdDisplay(data.citizenId);
-            document.getElementById('print-name').innerText = data.name;
-            document.getElementById('print-district').innerText = data.district;
-            document.getElementById('print-polling-place').innerText = data.pollingPlace;
+            document.getElementById('print-name').innerText = data.name || '-';
+            document.getElementById('print-district').innerText = data.district || '-';
+            document.getElementById('print-polling-place').innerText = data.pollingPlace || '-';
             document.getElementById('print-center').innerText = `${data.centerNo} (${data.centerName})`;
             document.getElementById('print-affiliation').innerText = `${data.affiliationNo} (${data.affiliationName})`;
-            document.getElementById('print-list-no').innerText = data.listNo;
-            document.getElementById('print-rights').innerText = data.rights;
+            document.getElementById('print-list-no').innerText = data.listNo || '-';
+            document.getElementById('print-rights').innerText = data.rights || '-';
         }
 
         function formatIdDisplay(val) {
-            let clean = val.replace(/\D/g, '');
+            if (!val) return '-';
+            let clean = String(val).replace(/\D/g, '');
             if(clean.length === 13) {
                 return `${clean.substring(0,1)}-${clean.substring(1,5)}-${clean.substring(5,10)}-${clean.substring(10,12)}-${clean.substring(12,13)}`;
             }
@@ -1111,10 +1082,10 @@
             tbody.innerHTML = '';
 
             const filtered = voterDatabase.filter(item => 
-                item.name.toLowerCase().includes(search) ||
-                item.citizenId.includes(search) ||
-                item.district.toLowerCase().includes(search) ||
-                item.pollingPlace.toLowerCase().includes(search)
+                (item.name && item.name.toLowerCase().includes(search)) ||
+                (item.citizenId && String(item.citizenId).includes(search)) ||
+                (item.district && item.district.toLowerCase().includes(search)) ||
+                (item.pollingPlace && item.pollingPlace.toLowerCase().includes(search))
             );
 
             document.getElementById('dbRecordCount').innerText = voterDatabase.length;
@@ -1227,45 +1198,69 @@
         function confirmResetDatabase() {
             showConfirmDialog(
                 "ยืนยันการรีเซ็ตข้อมูล",
-                "คุณต้องการรีเซ็ต Database กลับเป็นข้อมูลตัวอย่างเริ่มต้นใช่หรือไม่? (ข้อมูลที่เพิ่มใหม่จะถูกลบออก)",
+                "คุณต้องการรีเซ็ต Database ใช่หรือไม่? (ข้อมูลที่แก้ไขใหม่จะถูกรีเซ็ต)",
                 () => {
                     voterDatabase = [...DEFAULT_VOTER_DB];
                     saveDatabaseToStorage();
                     renderAdminTable();
-                    showToast('รีเซ็ตข้อมูลเป็นค่าเริ่มต้นเรียบร้อยแล้ว', 'success');
+                    showToast('รีเซ็ตข้อมูลเรียบร้อยแล้ว', 'success');
                 }
             );
         }
 
+        // รองรับการนำเข้าไฟล์ JSON, CSV และ Excel ทางแผงควบคุมผู้ดูแลระบบ
         function handleFileUpload(e) {
             const file = e.target.files[0];
             if (!file) return;
 
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                try {
-                    if (typeof XLSX === 'undefined') {
-                        showToast('ไม่สามารถอ่านไฟล์ Excel ได้เนื่องจากไม่ได้เชื่อมต่ออินเทอร์เน็ตเพื่อโหลดคลัง SheetJS', 'error');
-                        return;
-                    }
-                    const data = new Uint8Array(evt.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const firstSheet = workbook.SheetNames[0];
-                    const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
+            const fileExt = file.name.split('.').pop().toLowerCase();
 
-                    if (jsonData.length > 0) {
-                        voterDatabase = parseExcelJsonData(jsonData);
-                        saveDatabaseToStorage();
-                        renderAdminTable();
-                        showToast(`นำเข้าข้อมูลจากไฟล์ ${file.name} สำเร็จจำนวน ${voterDatabase.length} รายการ`, 'success');
-                    } else {
-                        showToast('ไม่พบข้อมูลในไฟล์ที่เลือก', 'error');
+            if (fileExt === 'json') {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    try {
+                        const parsed = JSON.parse(evt.target.result);
+                        const dataArray = Array.isArray(parsed) ? parsed : [parsed];
+                        if (dataArray.length > 0) {
+                            voterDatabase = parseVoterJsonData(dataArray);
+                            saveDatabaseToStorage();
+                            renderAdminTable();
+                            showToast(`นำเข้าข้อมูลจากไฟล์ ${file.name} สำเร็จจำนวน ${voterDatabase.length} รายการ`, 'success');
+                        } else {
+                            showToast('ไม่พบข้อมูลในไฟล์ JSON ที่เลือก', 'error');
+                        }
+                    } catch(err) {
+                        showToast('เกิดข้อผิดพลาดในการอ่านไฟล์ JSON กรุณาตรวจสอบโครงสร้างไฟล์', 'error');
                     }
-                } catch(err) {
-                    showToast('เกิดข้อผิดพลาดในการนำเข้าไฟล์ กรุณาตรวจสอบรูปแบบไฟล์ CSV/Excel', 'error');
-                }
-            };
-            reader.readAsArrayBuffer(file);
+                };
+                reader.readAsText(file, 'UTF-8');
+            } else {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    try {
+                        if (typeof XLSX === 'undefined') {
+                            showToast('ไม่สามารถอ่านไฟล์ Excel ได้เนื่องจากไม่ได้เชื่อมต่ออินเทอร์เน็ตเพื่อโหลดคลัง SheetJS', 'error');
+                            return;
+                        }
+                        const data = new Uint8Array(evt.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const firstSheet = workbook.SheetNames[0];
+                        const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
+
+                        if (jsonData.length > 0) {
+                            voterDatabase = parseVoterJsonData(jsonData);
+                            saveDatabaseToStorage();
+                            renderAdminTable();
+                            showToast(`นำเข้าข้อมูลจากไฟล์ ${file.name} สำเร็จจำนวน ${voterDatabase.length} รายการ`, 'success');
+                        } else {
+                            showToast('ไม่พบข้อมูลในไฟล์ที่เลือก', 'error');
+                        }
+                    } catch(err) {
+                        showToast('เกิดข้อผิดพลาดในการนำเข้าไฟล์ กรุณาตรวจสอบรูปแบบไฟล์ CSV/Excel', 'error');
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            }
         }
 
         function openChangePasswordModal() {
